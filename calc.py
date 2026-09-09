@@ -21,7 +21,9 @@ def main():
     elif op == '/':
         try:
             result = divide(num1, num2)
-        except ValueError:
+        except ValueError as error:
+            if str(error) != "Cannot divide by zero":
+                raise
             print("Error: Cannot divide by zero. Please try again.")
             return
     else:

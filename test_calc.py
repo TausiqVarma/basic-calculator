@@ -47,6 +47,22 @@ class TestCalc(unittest.TestCase):
         self.assertNotIn("Error: Cannot divide by zero", mock_stdout.getvalue())
         self.assertEqual(mock_input.call_count, 3)
 
+    @patch("sys.stdout", new_callable=io.StringIO)
+    @patch("builtins.input", side_effect=["10", "/", "2"])
+    @patch("calc.divide", side_effect=ValueError("Unexpected division failure"))
+    def test_main_propagates_unrelated_value_error(
+        self, mock_divide, mock_input, mock_stdout
+    ):
+        with self.assertRaisesRegex(ValueError, "Unexpected division failure"):
+            main()
+
+        mock_divide.assert_called_once_with(10.0, 2.0)
+        self.assertNotIn(
+            "Error: Cannot divide by zero. Please try again.",
+            mock_stdout.getvalue(),
+        )
+        self.assertEqual(mock_input.call_count, 3)
+
     def test_cli_handles_division_by_zero_without_traceback(self):
         completed = subprocess.run(
             [sys.executable, str(Path(__file__).with_name("calc.py"))],

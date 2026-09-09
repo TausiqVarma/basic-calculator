@@ -19,7 +19,11 @@ def main():
     elif op == '*':
         result = multiply(num1, num2)
     elif op == '/':
-        result = divide(num1, num2)
+        try:
+            result = divide(num1, num2)
+        except ValueError:
+            print("Error: Cannot divide by zero. Please try again.")
+            return
     else:
         print("Invalid operator")
         return
